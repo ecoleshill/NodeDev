@@ -43,11 +43,11 @@ public:
 	Node* getAddr() { return this; };				//Returns the address of current object
 
 	//NN Execution
-	bool Run(const float& InputValue);						//Executes the node and calculates the output based on input stimulis
-	float getNodeValue() const { return NodeValue; };		//Query function to get the address of the output values
+	bool Run(const float& InputValue, float (*fn)(float nNeti));		//Executes the node and calculates the output based on input stimulis
+	float getNodeValue() const { return NodeValue; };				//Query function to get the address of the output values
 
 	//NN Training
-	bool CalcDeltas(float Target);									//Calculates the delta values for the given node
+	bool CalcDeltas(float Target, float (*fn)(float nValue, float nSum, float nTarget));		//Calculates the delta values for the given node
 	void UpdateWeights(const float ada, const float OutputDelta);	//Updates the input weights and bias values for the node
 	float getWeight(int NodeID);									//Returns the weight value of the given NodeID connection
 	int getNodeID() { return NodeID; };								//Returns the NodeID of the current object

@@ -22,6 +22,8 @@ using namespace std;
 //Function Declarations
 void CompTarget(int, float&, float&);
 int CompareOtoT(float, float&, float&, int);
+float ActivationFunction(float nNeti) { return (1 / (1 + exp(-1 * nNeti))); };
+float TrainingFnHidden(float nValue, float nSum, float nTarget) { return (nValue * (1 - nValue) * nSum); };
 
 int main(int argc, char *argv[])
 {
@@ -95,13 +97,13 @@ int main(int argc, char *argv[])
 
 			//Run the NN
 			for (int iCount = 0; iCount < (int)InputNodes.size(); iCount++)
-				InputNodes[iCount].Run(Input[iCount]);
+				InputNodes[iCount].Run(Input[iCount], ActivationFunction);
 
 			for (int hCount = 0; hCount < (int)HiddenNodes.size(); hCount++)
-				HiddenNodes[hCount].Run(0);
+				HiddenNodes[hCount].Run(0, ActivationFunction);
 
 			for (int oCount = 0; oCount < (int)OutputNodes.size(); oCount++)
-				OutputNodes[oCount].Run(0);
+				OutputNodes[oCount].Run(0, ActivationFunction);
 
 			//Compare the output
 			CompareOtoT(OutputNodes[0].getNodeValue(), Target, IntTarget, TrainingCount);
@@ -111,11 +113,8 @@ int main(int argc, char *argv[])
 			
 			//Run CalcDeltas
 			for (int hCount = 0; hCount < (int)HiddenNodes.size(); hCount++)
-				HiddenNodes[hCount].CalcDeltas(OutputDelta);
+				HiddenNodes[hCount].CalcDeltas(OutputDelta, TrainingFnHidden);
 
-			//for (int oCount = 0; oCount < (int)OutputNodes.size(); oCount++)
-			//	OutputNodes[oCount].CalcDeltas(OutputDelta);
-			
 			//Run UpdateWeights
 			for (int hCount = 0; hCount < (int)HiddenNodes.size(); hCount++)
 				HiddenNodes[hCount].UpdateWeights((float)ADA, OutputDelta);

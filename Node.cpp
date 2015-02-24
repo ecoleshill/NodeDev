@@ -85,7 +85,7 @@ void Node::Init()
 
 /************* NN EXECUTION   ***************/
 
-bool Node::Run(const float& InputValue)
+bool Node::Run(const float& InputValue, float(*fn)(float nNeti))
 {
 	//Verify that there is a set of inputs flowing into the node, if not we
 	//can do anything
@@ -103,12 +103,12 @@ bool Node::Run(const float& InputValue)
 	case HIDDEN:
 		Neti = CalcNeti();
 		Neti += NodeBias;
-		NodeValue = (float)(1 / (1 + exp(-1 * Neti)));
+		NodeValue = fn(Neti);
 		return true;
 
 	case OUTPUT:
 		Neti = CalcNeti();
-		NodeValue = (float)(1 / (1 + exp(-1 * Neti)));
+		NodeValue = fn(Neti);
 		return true;
 		break;
 
@@ -120,7 +120,7 @@ bool Node::Run(const float& InputValue)
 
 /************* NN TRAINING    ***************/
 
-bool Node::CalcDeltas(float Target)
+bool Node::CalcDeltas(float Target, float(*fn)(float nValue, float nSum, float nTarget))
 {
 	float sum = 0.0;
 	switch (nType)
@@ -132,12 +132,12 @@ bool Node::CalcDeltas(float Target)
 		for (int x = 0; x < (int)OutputConnections.size(); x++)
 			sum += OutputConnections[x].NodeObj->getWeight(NodeID) * Target;
 
-		NodeDelta = NodeValue * (1 - NodeValue) * sum;
+		NodeDelta = fn(NodeValue, sum, Target);
 
 		return true;
 
 	case OUTPUT:
-		NodeDelta = NodeValue * (1 - NodeValue) * (Target - NodeValue);
+		NodeDelta = fn(NodeValue, sum, Target);
 		return true;
 
 	default:
