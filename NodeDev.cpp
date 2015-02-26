@@ -9,6 +9,7 @@ Purpose:   Testing application to verify the coding and functionality of the Nod
 #include <iostream>
 #include <vector>
 #include "Node.h"
+#include "Functions.h"
 #include "../NodeDev/datatype.h"
 using namespace std;
 
@@ -22,8 +23,6 @@ using namespace std;
 //Function Declarations
 void CompTarget(int, float&, float&);
 int CompareOtoT(float, float&, float&, int);
-float ActivationFunction(float nNeti) { return (1 / (1 + exp(-1 * nNeti))); };
-float TrainingFnHidden(float nValue, float nSum, float nTarget) { return (nValue * (1 - nValue) * nSum); };
 
 int main(int argc, char *argv[])
 {
@@ -109,7 +108,7 @@ int main(int argc, char *argv[])
 			CompareOtoT(OutputNodes[0].getNodeValue(), Target, IntTarget, TrainingCount);
 
 			float Output = OutputNodes[0].getNodeValue();			//There is only 1 output node in this network
-			float OutputDelta = Output * (1 - Output) * (Target - Output);
+			float OutputDelta = TrainingFnOutput(Output, 0, Target);
 			
 			//Run CalcDeltas
 			for (int hCount = 0; hCount < (int)HiddenNodes.size(); hCount++)
